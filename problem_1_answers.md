@@ -2,7 +2,7 @@
 
 2. The "Rank" table header contains the following style attributes:
 	* align: value centered; an HTML attribute, and the only one assigned
-	* padding: value 3px; CSS style
+	* padding: value 3px; CSS style applied on all ths under anything with the class main-content
 	* Everything else is inherited or default
 
 3. The DOM puts everything into a nice tree setup for you so that you can see the structure of the page and understand inheritance at a glace; it also tells you more about the type of data each element contains (and I believe, if I'm reading the Murray book correctly, that when we start dealing with bound data, that will be visible there as well); the DOM isn't much interested in the content, so much at the structure. The HTML source is the full-on tag soup and has the content front and center; from experience I know that it won't show you dynamaic changes to the DOM as they happen (well, not without a browser addon anyway -- such things exist).  The DOM is going to be most useful when you're trying to track down data and behaviors in a way where the content isn't particularly important, but the structure is.   It can sometimes be difficult to track down your hunk of code in the Inspector if you recognize it by content rather than an ID or class, though, so the source can come in handy for that, as well as for a big-picture take on things.  I actually like to use a Firefox add-on that kind of combines the two (Web Developer Toolbar), and also gives me a nice clickable interface for popping up the info on the chunk I'm currently working on, but I believe that the DOM Inspector may offer some things that the add-on doesn't.  
