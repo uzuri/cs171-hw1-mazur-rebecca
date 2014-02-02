@@ -55,6 +55,16 @@
   	  background-color: #ffd700;
   }
   
+  .sorted
+  {
+  	  cursor: n-resize;
+  }
+  
+  th, .downsorted
+  {
+  	  cursor: s-resize;
+  }
+  
   </style>
 </head>
 <body>
@@ -183,6 +193,14 @@
 					return d3.ascending(anum, bnum);
 				});
 			}
+			// Reset the striping
+			tbody.selectAll("tr").attr("class", null).attr("class", function(d, i) {
+				if (i % 2 == 1)
+				{
+					return "odd";
+				}
+				return "even";
+			});
 		});
 		
 		// Add appropriate number of td cells in body
