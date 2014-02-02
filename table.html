@@ -5,32 +5,139 @@
   <title>CS171 Homework 1</title>
 
   <style type="text/css">
-  /* YOUR CSS */
+  body
+  {
+  	  font-family: "Times New Roman", serif;
+  }
+  
+  h1
+  {
+  	  font-size: 30px;
+  	  line-height: 36.6px;
+  	  margin: 0;
+  	  padding: 0;
+  	  color: #9b0000;
+  }
+  
+  table
+  {
+  	  margin: 1em;
+  }
+  
+  table, td, th, caption
+  {
+  	  border-collapse: collapse;
+  	  border: 1px solid black;
+  	  padding: 2px;
+  }
+
+  caption
+  {
+  	  font-weight: bold;
+  }
+  
+  td:first-child, td:last-child
+  {
+  	  text-align: center;
+  }
+  
+  .odd
+  {
+  }
+  
+  .even
+  {
+  	  background-color: #faebd7
+  }
+  
   </style>
 </head>
 <body>
   <script src="http://d3js.org/d3.v3.min.js"></script>
   <script>
-  d3.tsv("unemp_states_us_nov_2013.tsv", function(error, data){
+	/*d3.tsv("unemp_states_us_nov_2013.tsv", function(error, data){
+	
+		var table = d3.select("body").append("table"),
+		tbody = table.append("tbody");
+	
+		var rows = tbody.selectAll("tr")
+		.data(data)
+		.enter()
+		.append("tr");
+	
+		var cells = rows.selectAll("td")
+		.data(function(row) {
+				return d3.range(Object.keys(row).length).map(function(column, i) {
+					return row[Object.keys(row)[i]];
+				});
+				})
+		.enter()
+		.append("td")
+		.text(function(d) { return d; });
+	});*/
+	
+	d3.select("body").append("h1").text("Local Area Unemployment Statistics");
+	
+	d3.text("unemp_states_us_nov_2013.tsv", function(error, data){
+		var allrows = d3.tsv.parseRows(data);
+		var headrows = allrows.slice(0, 1);
+		var bodyrows = allrows.slice(1);
+			
+		// Add thead and tbody and a variable to keep track of both
+		var table = d3.select("body").append("table"),
+			thead = table.append("thead"),
+			tbody = table.append("tbody");
 
-      var table = d3.select("body").append("table"),
-      tbody = table.append("tbody");
-
-      var rows = tbody.selectAll("tr")
-      .data(data)
-      .enter()
-      .append("tr");
-
-      var cells = rows.selectAll("td")
-      .data(function(row) {
-        return d3.range(Object.keys(row).length).map(function(column, i) {
-          return row[Object.keys(row)[i]];
-          });
-        })
-      .enter()
-      .append("td")
-      .text(function(d) { return d; });
-      });
+			
+		table.append("caption").html("Unemployment Rates for States<br />Monthly Rankings<br />Seasonally Adjusted<br />Dec. 2013");
+			
+		// Add appropriate number of rows in thead
+		var hrows = thead.selectAll("tr")
+		.data(headrows)
+		.enter()
+		.append("tr");
+			
+		// Add appropriate number of rows in tbody
+		var rows = tbody.selectAll("tr")
+		.data(bodyrows)
+		.enter()
+		.append("tr")
+		.attr("class", function(d, i) {
+			if (i % 2 == 1)
+			{
+				return "odd";
+			}
+			else
+			{
+				return "even";
+			}
+		});
+	
+		
+		// Add appropriate number of th cells in head
+		var hcells = hrows.selectAll("th")
+		.data(function(row) {
+			return d3.range(Object.keys(row).length).map(function(column, i) {
+				return row[Object.keys(row)[i]];
+			});
+		})
+		.enter()
+		.append("th")
+		.text(function(d) { return d; });
+		
+		// Add appropriate number of td cells in body
+		var cells = rows.selectAll("td")
+		.data(function(row) {
+			return d3.range(Object.keys(row).length).map(function(column, i) {
+				return row[Object.keys(row)[i]];
+			});
+		})
+		.enter()
+		.append("td")
+		.text(function(d) { return d; });
+	});
+	
+	
   </script>
 </body>
 </html>
