@@ -1,4 +1,4 @@
-1. The colspan sttribute, in general, makes a table cell stretch across columns -- in this particular case, it is making the table header stretch all the way across the top of the table to act as a label for the entire thing.
+1. The colspan attribute, in general, makes a table cell stretch across columns -- in this particular case, it is making the table header stretch all the way across the top of the table to act as a label for the entire thing.
 
 2. The "Rank" table header contains the following style attributes:
 * align: value centered; an HTML attribute, and the only one assigned
