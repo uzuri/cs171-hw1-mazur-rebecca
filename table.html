@@ -50,6 +50,11 @@
   	  background-color: #faebd7
   }
   
+  .high, .high td.odd, .high td.even
+  {
+  	  background-color: #ffd700;
+  }
+  
   </style>
 </head>
 <body>
@@ -111,6 +116,12 @@
 			{
 				return "even";
 			}
+		})
+		.on("mouseover", function(d){
+			d3.select(this).classed("high", true);
+		})
+		.on("mouseout", function(d){
+			d3.select(this).classed("high", false);
 		});
 	
 		
@@ -134,7 +145,20 @@
 		})
 		.enter()
 		.append("td")
-		.text(function(d) { return d; });
+		.text(function(d) { return d; })
+		.attr("class", function(d, i){
+			// Give each td an appropriate column name -- this will make it easy to select said column distinctly from the others later
+			return "column" + i;
+			
+		})
+		.on("mouseover", function(d, i){
+			// now select all the columns with the same column class and add the highlight class
+			d3.selectAll(".column" + i).classed("high", true);
+		})
+		.on("mouseout", function(d, i){
+			// and then reverse it when you mouse out
+			d3.selectAll(".column" + i).classed("high", false);
+		});
 	});
 	
 	
