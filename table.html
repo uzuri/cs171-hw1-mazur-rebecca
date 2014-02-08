@@ -205,6 +205,9 @@
 			});
 		});
 		
+		
+		
+		
 		// Add appropriate number of td cells in body
 		var cells = rows.selectAll("td")
 		.data(function(row) {
@@ -231,12 +234,19 @@
 		
 		
 		// Color shading
+		// Grab min and max values here for shading
 		var color = d3.scale.linear()
-			.domain([0, tbody.selectAll("tr")[0].length-1])
+			.domain([d3.min(tbody.selectAll("td.column2").data()), d3.max(tbody.selectAll("td.column2").data())])
 			.interpolate(d3.interpolateRgb)
 			.range(["orangered", "silver"]);
-		alert(color(0) + " " +  color(10) + " " + color(150));
+			
+		tbody.selectAll("td.column2")
+			.attr("style", function() {
+				return "background-color: " + color(d3.select(this).text());
+			});
+		
 	});
+	
 	
 	
   </script>
