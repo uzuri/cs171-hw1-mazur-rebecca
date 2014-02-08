@@ -13,6 +13,13 @@
   </style>
 </head>
 <body>
+
+<label><input type="radio" name="order" value="state"> State</label>
+<label><input type="radio" name="order" value="rate" checked> Rate</label>
+
+
+<div id="chart"></div>
+
   <script type="text/javascript">
 	
 	var margin = {top: 50, bottom: 10, left:300, right: 40};
@@ -26,7 +33,7 @@
 	
 	var state = function(d) { return d.State; };
 	
-	var svg = d3.select("body").append("svg")
+	var svg = d3.select("#chart").append("svg")
 		.attr("width", width+margin.left+margin.right)
 		.attr("height", height+margin.top+margin.bottom);
 	
@@ -67,6 +74,18 @@
 		.attr("dx", function(d) { return -5 })
 		.attr("text-anchor", "end")
 		.text(function(d) { return d.State; });
+		
+	d3.selectAll("input").on("change", reorder);
+	
+	function reorder()
+	{	
+		bars.transition()
+		.duration(750)
+		.delay(function(d, i) { return i * 10; })
+		.attr("transform", function(d, i) { 
+			return "translate("+ i +", "+ 0 +")"; 
+		});
+	}
 
     });
   </script>
