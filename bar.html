@@ -3,12 +3,21 @@
 <head>
 <script src="http://d3js.org/d3.v3.min.js"></script>
   <style type="text/css">
-    rect {
+    rect 
+    {
         fill-opacity: .8;
     }
-    text {
+    
+    text 
+    {
         font: 10px sans-serif;
     }
+    
+    .ctitle
+    {
+    	    font: 30px sans-serif;
+    }
+    
   </style>
 </head>
 <body>
@@ -36,10 +45,17 @@
 	var svg = d3.select("#chart").append("svg")
 		.attr("width", width+margin.left+margin.right)
 		.attr("height", height+margin.top+margin.bottom);
-	
+		
 	var g = svg.append("g")
 		.attr("transform", "translate("+margin.left+","+margin.top+")");
 	
+	svg.append("text")
+		.attr("x", function(d) { return width/2 })
+		.attr("y", function(d) { return 40 })
+		.attr("text-anchor", "start")
+		.classed("ctitle", true)
+		.text("Local Area Unemployment Statistics");
+		
 	d3.tsv("unemp_states_us_nov_2013.tsv", function(data) {
 	
 		var max = d3.max(data, function(d) { return d.Rate; } );
@@ -118,7 +134,8 @@
 			.duration(750)
 			.delay(function(d, i) { return i * 10; })
 			.attr("transform", function(d, i) { 
-				return "translate("+ 0 +", "+ i * (bar_height + 0.8) +")"; 
+				// I'm not totally happy with this as it doesn't map nicely to the original spacing; I know I need to recreate a scale here like yScale but on the newly ordered data, I just haven't figued 	out how to do it
+				return "translate("+ 0 +", "+ i * (bar_height + 1.6) +")"; 
 			});
 		});
 		
