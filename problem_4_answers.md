@@ -1,0 +1,5 @@
+1. tbody.selectAll("tr")[0].length-1 is grabbing the number of rows in tbody (minus one) -- this means that for this particular data set, the range will be 0 to 49 (as we have 50 states).
+
+2. color(0) returns the value mapped to 0 in our range -- in this case, the hex value for orangered.  color(10) gives us a value about 1/5th of the way along the continuum between orangered and silver.  and color(150) gives us some bizarre random teal.  This is because it attempts to extrapolate what that color should be (linearly, in this case). This can be turned off with clamp.
+
+3. The scale would run from 2.6 to 9.0, but the mapping to colors would behave similarly (provided that you were passing numbers within that domain -- obviously the three examples from question 2 would all be outside the domain and therefore extrapolated).  This would be usefull if you want to color-encode the Rate instead of the Rank.
