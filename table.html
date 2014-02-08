@@ -240,10 +240,69 @@
 			.interpolate(d3.interpolateRgb)
 			.range(["orangered", "silver"]);
 			
+		// Color the Rate column	
 		tbody.selectAll("td.column2")
 			.attr("style", function() {
 				return "background-color: " + color(d3.select(this).text());
 			});
+			
+			
+		// Bar chart
+		
+		hrows.insert("th")
+			.text("Chart")
+			.on("click", function(d, i) {
+				// Probably a way cleaner way to do this... look into if there's time
+				if (d3.select(this).attr("class") == "sorted")
+				{
+					d3.selectAll("th").classed("sorted", false);
+					d3.selectAll("th").classed("downsorted", false);
+					d3.select(this).classed("downsorted", true);
+					tbody.selectAll("tr").sort(function(a, b) {
+						anum = Number(a[2]);
+						bnum = Number(b[2]);
+						// break any ties by diverting to state column
+						if (anum == bnum)
+						{
+							return d3.descending(a[1], b[1]);
+						}
+						return d3.descending(anum, bnum);
+					});
+				}
+				else
+				{
+					d3.selectAll("th").classed("downsorted", false);
+					d3.selectAll("th").classed("sorted", false);
+					d3.select(this).classed("sorted", true);
+					tbody.selectAll("tr").sort(function(a, b) {
+						anum = Number(a[2]);
+						bnum = Number(b[2]);
+						// break any ties by diverting to state column
+						if (anum == bnum)
+						{
+							return d3.ascending(a[1], b[1]);
+						}
+						return d3.ascending(anum, bnum);
+					});
+				}
+				// Reset the striping
+				tbody.selectAll("tr").attr("class", null).attr("class", function(d, i) {
+					if (i % 2 == 1)
+					{
+						return "odd";
+					}
+					return "even";
+				});
+			});
+		
+		rows.insert("td")
+			.attr("class", "column3")
+			.append("svg")
+			.attr("width", 50)
+			.attr("height", 10)
+			.append("rect")
+			.attr("height", 10)
+			.attr("width", function(d) { return parseFloat(d[0]); });
 		
 	});
 	
