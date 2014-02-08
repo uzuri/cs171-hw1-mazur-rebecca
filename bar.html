@@ -4,7 +4,6 @@
 <script src="http://d3js.org/d3.v3.min.js"></script>
   <style type="text/css">
     rect {
-        fill: teal;
         fill-opacity: .8;
     }
     text {
@@ -32,6 +31,7 @@
 	var bar_height = 15;
 	
 	var state = function(d) { return d.State; };
+	var rate = function(d) { return d.Rate; };
 	
 	var svg = d3.select("#chart").append("svg")
 		.attr("width", width+margin.left+margin.right)
@@ -42,52 +42,88 @@
 	
 	d3.tsv("unemp_states_us_nov_2013.tsv", function(data) {
 	
-	var max = d3.max(data, function(d) { return d.Rate; } );
-	var min = 0;
-	
-	xScale.domain([min, max]);
-	yScale.domain(data.map(state));
-	
-	var groups = g.append("g")
-		.selectAll("g")
-		.data(data)
-		.enter()
-		.append("g")
-		.attr("transform", function(d, i) { return "translate(0, " + yScale(d.State) +")"; });
-	
-	var bars = groups
-		.append("rect")
-		.attr("width", function(d) { return xScale(d.Rate); })
-		.attr("height", bar_height);
-	
-	groups.append("text")
-		.attr("x", function(d) { return xScale(d.Rate); })
-		.attr("y", function(d) { return bar_height / 2 })
-		.attr("dy", function(d) { return 2 })
-		.attr("dx", function(d) { return -5 })
-		.attr("text-anchor", "end")
-		.text(function(d) { return d.Rank; });
+		var max = d3.max(data, function(d) { return d.Rate; } );
+		var min = 0;
 		
-	groups.append("text")
-		.attr("y", function(d) { return bar_height / 2 })
-		.attr("dy", function(d) { return 3 })
-		.attr("dx", function(d) { return -5 })
-		.attr("text-anchor", "end")
-		.text(function(d) { return d.State; });
+		xScale.domain([min, max]);
+		yScale.domain(data.map(state));
 		
-	d3.selectAll("input").on("change", reorder);
-	
-	function reorder()
-	{	
-		bars.transition()
-		.duration(750)
-		.delay(function(d, i) { return i * 10; })
-		.attr("transform", function(d, i) { 
-			return "translate("+ i +", "+ 0 +")"; 
+		var groups = g.append("g")
+			.selectAll("g")
+			.data(data)
+			.enter()
+			.append("g")
+			.attr("transform", function(d, i) { 	
+				return "translate(0, " + yScale(d.State) +")"; });
+		
+		// Color shading
+		// Grab min and max values here for shading
+		var color = d3.scale.linear()
+			.domain([d3.min(data.map(rate)), d3.max(data.map(rate))])
+			.interpolate(d3.interpolateRgb)
+			.range(["orangered", "silver"]);
+			
+			
+		var bars = groups
+			.append("rect")
+			.attr("width", function(d) { return xScale(d.Rate); })
+			.attr("height", bar_height)
+			.attr("fill", function(d) {
+				return color(d.Rate);
+			});
+		
+		var rates = groups.append("text")
+			.attr("x", function(d) { return xScale(d.Rate); })
+			.attr("y", function(d) { return bar_height / 2 })
+			.attr("dy", function(d) { return 2 })
+			.attr("dx", function(d) { return -5 })
+			.attr("text-anchor", "end")
+			.text(function(d) { return d.Rank; });
+			
+		var titles = groups.append("text")
+			.attr("y", function(d) { return bar_height / 2 })
+			.attr("dy", function(d) { return 3 })
+			.attr("dx", function(d) { return -5 })
+			.attr("text-anchor", "end")
+			.attr("class", "stitle")
+			.text(function(d) { return d.State; });
+			
+			
+			
+		d3.selectAll("input").on("click", function() {
+			var thisclick = d3.select(this);
+			var clickval = d3.select(this).attr("value");
+			var sortval = d3.select(this).attr("class");
+			groups.sort(function(a, b) {
+				d3.selectAll("input").classed("sorted", false);
+				d3.selectAll("input").classed("downsorted", false);
+				if (clickval == "state")
+				{
+					if (sortval == "sorted")
+					{
+						thisclick.classed("downsorted", true);
+						return d3.descending(a.State, b.State);
+					}
+					thisclick.classed("sorted", true);
+					return d3.ascending(a.State, b.State);
+				}
+				if (sortval == "sorted")
+				{
+					thisclick.classed("downsorted", true);
+					return d3.descending(a.Rate, b.Rate);
+				}
+				thisclick.classed("sorted", true);
+				return d3.ascending(a.Rate, b.Rate);
+			}).transition()
+			.duration(750)
+			.delay(function(d, i) { return i * 10; })
+			.attr("transform", function(d, i) { 
+				return "translate("+ 0 +", "+ i * (bar_height + 0.8) +")"; 
+			});
 		});
-	}
-
-    });
+		
+	});
+    
   </script>
 </body>
 </html>
