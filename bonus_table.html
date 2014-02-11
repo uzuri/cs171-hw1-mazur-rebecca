@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>CS171 Homework 1</title>
+
+  <style type="text/css">
+  body
+  {
+  	  font-family: "Times New Roman", serif;
+  }
+  
+  h1
+  {
+  	  font-size: 30px;
+  	  line-height: 36.6px;
+  	  margin: 0;
+  	  padding: 0;
+  	  color: #9b0000;
+  }
+  
+  table
+  {
+  	  margin: 1em;
+  }
+  
+  table, td, th, caption
+  {
+  	  border-collapse: collapse;
+  	  border: 1px solid black;
+  	  padding: 2px;
+  }
+
+  caption
+  {
+  	  font-weight: bold;
+  }
+  
+  td:first-child, td:last-child
+  {
+  	  text-align: center;
+  }
+  
+  .odd
+  {
+  }
+  
+  .even
+  {
+  	  background-color: #faebd7
+  }
+  
+  .high, .high td.odd, .high td.even
+  {
+  	  background-color: #ffd700;
+  }
+  
+  .sorted
+  {
+  	  cursor: n-resize;
+  }
+  
+  th, .downsorted
+  {
+  	  cursor: s-resize;
+  }
+  
+  </style>
+</head>
+<body>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script>
+	
+	
+	d3.select("body").append("h1").text("Local Area Unemployment Statistics");
+	
+	d3.text("unemp_states_us_nov_2013.tsv", function(error, data){
+		var allrows = d3.tsv.parseRows(data);
+		var headrows = allrows.slice(0, 1);
+		var bodyrows = allrows.slice(1);
+			
+		// Add thead and tbody and a variable to keep track of both
+		var table = d3.select("body").append("table"),
+			thead = table.append("thead"),
+			tbody = table.append("tbody");
+
+			
+		table.append("caption").html("Unemployment Rates for States<br />Monthly Rankings<br />Seasonally Adjusted<br />Dec. 2013");
+			
+		// Add appropriate number of rows in thead
+		var hrows = thead.selectAll("tr")
+		.data(headrows)
+		.enter()
+		.append("tr");
+			
+		// Add appropriate number of rows in tbody
+		var rows = tbody.selectAll("tr")
+		.data(bodyrows)
+		.enter()
+		.append("tr")
+		.attr("class", function(d, i) {
+			if (i % 2 == 1)
+			{
+				return "odd";
+			}
+			else
+			{
+				return "even";
+			}
+		})
+		.on("mouseover", function(d){
+			d3.select(this).classed("high", true);
+		})
+		.on("mouseout", function(d){
+			d3.select(this).classed("high", false);
+		});
+	
+		
+		// Add appropriate number of th cells in head
+		var hcells = hrows.selectAll("th")
+		.data(function(row) {
+			return d3.range(Object.keys(row).length).map(function(column, i) {
+				return row[Object.keys(row)[i]];
+			});
+		})
+		.enter()
+		.append("th")
+		.text(function(d) { return d; })
+		.on("click", function(d, i) {
+			if (i == 1)
+			{
+				sorter(d3.select(this), i, i, false);
+			}
+			else
+			{
+				sorter(d3.select(this), i, 1, true);
+			}
+		});
+		
+		
+		
+		
+		// Add appropriate number of td cells in body
+		var cells = rows.selectAll("td")
+		.data(function(row) {
+			return d3.range(Object.keys(row).length).map(function(column, i) {
+				return row[Object.keys(row)[i]];
+			});
+		})
+		.enter()
+		.append("td")
+		.text(function(d) { return d; })
+		.attr("class", function(d, i){
+			// Give each td an appropriate column name -- this will make it easy to select said column distinctly from the others later
+			return "column" + i;
+			
+		})
+		.on("mouseover", function(d, i){
+			// now select all the columns with the same column class and add the highlight class
+			d3.selectAll(".column" + i).classed("high", true);
+		})
+		.on("mouseout", function(d, i){
+			// and then reverse it when you mouse out
+			d3.selectAll(".column" + i).classed("high", false);
+		});
+		
+		
+		// Color shading
+		// Grab min and max values here for shading
+		var color = d3.scale.linear()
+			.domain([d3.min(tbody.selectAll("td.column2").data()), d3.max(tbody.selectAll("td.column2").data())])
+			.interpolate(d3.interpolateRgb)
+			.range(["orangered", "silver"]);
+			
+		// Color the Rate column	
+		tbody.selectAll("td.column2")
+			.attr("style", function() {
+				return "background-color: " + color(d3.select(this).text());
+			});
+			
+			
+		// Bar chart
+		
+		hrows.insert("th", ":first-child")
+			.text("Chart")
+			.on("click", function(d, i) {
+				sorter(d3.select(this), 2, 1, true);
+			});
+		
+		rows.insert("td", ":first-child")
+			.attr("class", "column3")
+			.append("svg")
+			.attr("width", 50)
+			.attr("height", 10)
+			.append("rect")
+			.attr("height", 10)
+			.attr("width", function(d) { return parseFloat(d[0]); });
+		
+			
+		// A generic sorter so we don't have this code repeated all over the place
+		function sorter(thiscol, sortby, secondarysortby, makenumeric)
+		{
+			if (thiscol.attr("class") == "sorted")
+			{
+				d3.selectAll("th").classed("sorted", false);
+				d3.selectAll("th").classed("downsorted", false);
+				thiscol.classed("downsorted", true);
+				tbody.selectAll("tr").sort(function(a, b) {
+					anum = a[sortby];
+					bnum = b[sortby];
+					if (makenumeric)
+					{
+						anum = Number(anum);
+						bnum = Number(bnum);
+						// break any ties by diverting to state column
+						if (anum == bnum)
+						{
+							return d3.descending(a[secondarysortby], b[secondarysortby]);
+						}
+					}
+					return d3.descending(anum, bnum);
+				});
+			}
+			else
+			{
+				d3.selectAll("th").classed("downsorted", false);
+				d3.selectAll("th").classed("sorted", false);
+				thiscol.classed("sorted", true);
+				tbody.selectAll("tr").sort(function(a, b) {
+					anum = a[sortby];
+					bnum = b[sortby];
+					if (makenumeric)
+					{
+						anum = Number(anum);
+						bnum = Number(bnum);
+						// break any ties by diverting to state column
+						if (anum == bnum)
+						{
+							return d3.ascending(a[secondarysortby], b[secondarysortby]);
+						}
+					}
+					return d3.ascending(anum, bnum);
+				});
+			}
+			
+			// Reset the striping
+			tbody.selectAll("tr").attr("class", null).attr("class", function(d, i) {
+				if (i % 2 == 1)
+				{
+					return "odd";
+				}
+				return "even";
+			});
+		}
+	});
+	
+	
+	
+  </script>
+</body>
+</html>
