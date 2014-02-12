@@ -111,6 +111,7 @@
 		
 		
 		function reorder() {
+			curfilter = d3.select("input[name=points]")[0][0].value;
 			var thisclick = d3.select(this);
 			var clickval = d3.select(this).attr("value");
 			var sortval = d3.select(this).attr("class");
@@ -147,11 +148,17 @@
 				return newarray;
 			})[0]);	
 			
+			
+			// This is also close but not quite -- it doesn't do a red/green color on the change
 			groups.transition()
 				.duration(750)
 				.delay(function(d, i) { return i * 10; })
 				.attr("transform", function(d, i) { 
-					return "translate(0, " + yScale(d.State) +")"; 
+					if (i <= curfilter)
+					{
+						return "translate(0, " + yScale(d.State) +")"; 
+					}
+					return "translate("+ 0 +", "+ (height + 100) +")"; 
 				});
 		}
 		
@@ -163,26 +170,23 @@
 			})
 			.on("mouseup", function() {
 		
-			// Well, I've got them going away, but I can't get them to come back
+			// Close, but not quite; they aren't removed from the DOM
 			
-			thisval = this.value;
+			newvalue = this.value;
 			
 			var dropelements = groups.filter(function(d, i) {
-				if (i > thisval)
+				if (i > newvalue)
 				{
 					return true;
 				}
 			});
 			
 			var gainelements = groups.filter(function(d, i) {
-				if (i <= thisval && i > oldvalue)
+				if (i <= newvalue && i > oldvalue)
 				{
 					return true;
 				}
 			});
-			
-			console.log(dropelements);
-			console.log(gainelements);
 			
 			dropelements.selectAll("rect")
 				.transition()
@@ -216,11 +220,6 @@
 				.attr("fill", function(d, i){	
 					return color(d.Rate);
 				});
-			
-			
-			//elements.exit().transition().duration(750).remove();
-			
-			//elements.enter().append("g")
 		});
 		
 	});
