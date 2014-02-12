@@ -180,7 +180,6 @@
 			
 			
 		// Bar chart
-		
 		hrows.insert("th")
 			.text("Chart")
 			.on("click", function(d, i) {
@@ -197,6 +196,27 @@
 			.attr("width", function(d) { return parseFloat(d[0]); });
 		
 			
+		
+		// Initial sort
+		tbody.selectAll("tr").sort(function(a, b) {
+			anum = Number(a[0]);
+			bnum = Number(b[0]);
+			// break any ties by diverting to state column
+			if (anum == bnum)
+			{
+				return d3.descending(a[1], b[1]);
+			}
+		}).attr("class", null).attr("class", function(d, i) {
+			if (i % 2 == 1)
+			{
+				return "odd";
+			}
+			return "even";
+		});
+		thead.selectAll("th:first-child").classed("sorted", true);
+		
+		
+		
 		// A generic sorter so we don't have this code repeated all over the place
 		function sorter(thiscol, sortby, secondarysortby, makenumeric)
 		{
