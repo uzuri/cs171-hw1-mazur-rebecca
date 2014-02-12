@@ -108,11 +108,12 @@
 			
 		d3.selectAll("input").on("click", reorder);
 		
+		
+		
 		function reorder() {
 			var thisclick = d3.select(this);
 			var clickval = d3.select(this).attr("value");
 			var sortval = d3.select(this).attr("class");
-			// This works... but I don't think it's right.  It's not working on the selection that I feel like it should be.
 			groups.sort(function(a, b) {
 				d3.selectAll("input").classed("sorted", false);
 				d3.selectAll("input").classed("downsorted", false);
@@ -133,15 +134,30 @@
 				}
 				thisclick.classed("sorted", true);
 				return d3.ascending(a.Rate, b.Rate);
-			}).transition()
+			});
+			
+			
+			yScale.domain(groups.map(function(d) {
+			
+				var newarray = new Array();
+				for (i = 0; i < d.length; i++)
+				{
+					newarray.push(d[i].__data__.State);
+				}
+				return newarray;
+			})[0]);	
+			
+			console.log(yScale("OHIO"));
+				
+			
+			groups.transition()
 			.duration(750)
 			.delay(function(d, i) { return i * 10; })
 			.attr("transform", function(d, i) { 
-				// I know this isn't right and should be using some sort of scale, but I couldn't come up with one that worked right, they all ended up with everything in the same location
+				// I know this isn't right and should be remapping yScale but I can't figure out what data I should be remapping it on  I've tried just about everything.
 				
-				// this definitely doesn't work -- fails silently and does nothing though I know a value is being assigned: return "translate("+ 0 +", "+ yScale(d.State) +")"; 
-				
-				return "translate("+ 0 +", "+ (i * (bar_height + 1.6)) +")"; 
+				//return "translate("+ 0 +", "+ (i * (bar_height + 1.6)) +")";
+				return "translate(0, " + yScale(d.State) +")"; 
 			});
 		}
 		

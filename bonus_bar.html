@@ -148,8 +148,13 @@
 			thisval = this.value;
 			
 			var elements = groups.data(data.filter(function(d, i) {
+				if (i < thisval)
+				{
+					return true;
+				}
+			}));
 			
-				bars.transition()
+			elements.transition()
 				.duration(750)
 				.attr("fill", function(d, i){
 					if (i > thisval)
@@ -164,18 +169,17 @@
 					{
 						return color(d.Rate);
 					}
+				})
+				.delay(750)
+				.duration(750)
+				.attr("transform", function(d, i){
+					return "translate("+ 0 +", "+ height +")"; 
 				});
 			
-				if (i < thisval)
-				{
-					return true;
-				}
-			}));
 			
+			//elements.exit().transition().duration(750).remove();
 			
-			elements.exit().transition().duration(750).remove();
-			
-			elements.enter().append("g")
+			//elements.enter().append("g")
 		});
 	});
     
