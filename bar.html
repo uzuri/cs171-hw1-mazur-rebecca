@@ -138,7 +138,7 @@
 			
 			
 			yScale.domain(groups.map(function(d) {
-			
+				// This isn't pretty, but it'll do
 				var newarray = new Array();
 				for (i = 0; i < d.length; i++)
 				{
@@ -147,16 +147,10 @@
 				return newarray;
 			})[0]);	
 			
-			console.log(yScale("OHIO"));
-				
-			
 			groups.transition()
 			.duration(750)
 			.delay(function(d, i) { return i * 10; })
 			.attr("transform", function(d, i) { 
-				// I know this isn't right and should be remapping yScale but I can't figure out what data I should be remapping it on  I've tried just about everything.
-				
-				//return "translate("+ 0 +", "+ (i * (bar_height + 1.6)) +")";
 				return "translate(0, " + yScale(d.State) +")"; 
 			});
 		}
