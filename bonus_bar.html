@@ -24,6 +24,7 @@
 
 <label><input type="radio" name="order" value="state"> State</label>
 <label><input type="radio" name="order" value="rate" checked> Rate</label>
+<input type="range" name="points" min="0" max="50" step="1" value="50">
 
 
 <div id="chart"></div>
@@ -106,7 +107,7 @@
 			
 			
 			
-		d3.selectAll("input").on("click", function() {
+		d3.selectAll("input[name=order]").on("click", function() {
 			var thisclick = d3.select(this);
 			var clickval = d3.select(this).attr("value");
 			var sortval = d3.select(this).attr("class");
@@ -139,6 +140,70 @@
 			});
 		});
 		
+
+		
+		d3.select("input[name=points]").on("mouseup", function() {
+			
+			thisval = this.value;
+			
+			//alert(thisval);
+			
+			/*bars.transition()
+				.duration(750)
+				.attr("fill", function(d, i){
+					if (i > thisval)
+					{
+						return "red";
+					}
+					else
+					{
+						return color(d.Rate);
+					}
+				});*/
+			
+			
+			var elements = groups.data(data.filter(function(d, i) {
+			
+				bars.transition()
+				.duration(750)
+				.attr("fill", function(d, i){
+					if (i > thisval)
+					{
+						return "red";
+					}
+					else if (i <= thisval && thisval < groups.length)
+					{
+						return "green";
+					}
+					else
+					{
+						return color(d.Rate);
+					}
+				});
+			
+				if (i < thisval)
+				{
+					return true;
+				}
+			})).transition()
+			.duration(750)
+			.attr("transform", function(d, i) 
+			{
+				if (i > thisval)
+				{
+					return "translate("+ 0 +", "+ 50 * (bar_height + 1.6) +")"; 
+				}
+				else
+				{
+					return "translate(" + d + ")"; 
+				}
+			});
+			
+			
+			elements.exit().transition().duration(750).remove();
+			
+			//elements.enter().append("g")
+		});
 	});
     
   </script>
