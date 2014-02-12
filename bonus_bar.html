@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -107,7 +106,11 @@
 			
 			
 			
-		d3.selectAll("input[name=order]").on("click", function() {
+		d3.selectAll("input[name=order]").on("click", reorder);
+		
+		
+		
+		function reorder() {
 			var thisclick = d3.select(this);
 			var clickval = d3.select(this).attr("value");
 			var sortval = d3.select(this).attr("class");
@@ -131,49 +134,87 @@
 				}
 				thisclick.classed("sorted", true);
 				return d3.ascending(a.Rate, b.Rate);
-			}).transition()
-			.duration(750)
-			.delay(function(d, i) { return i * 10; })
-			.attr("transform", function(d, i) { 
-				return "translate("+ 0 +", "+ i * (bar_height + 1.6) +")"; 
 			});
-		});
+			
+			
+			yScale.domain(groups.map(function(d) {
+				// This isn't pretty, but it'll do
+				var newarray = new Array();
+				for (i = 0; i < d.length; i++)
+				{
+					newarray.push(d[i].__data__.State);
+				}
+				return newarray;
+			})[0]);	
+			
+			groups.transition()
+				.duration(750)
+				.delay(function(d, i) { return i * 10; })
+				.attr("transform", function(d, i) { 
+					return "translate(0, " + yScale(d.State) +")"; 
+				});
+		}
 		
-
 		
-		d3.select("input[name=points]").on("mouseup", function() {
+		
+		d3.select("input[name=points]")
+			.on("mousedown", function(){
+				oldvalue = this.value;
+			})
+			.on("mouseup", function() {
 		
 			// Well, I've got them going away, but I can't get them to come back
 			
 			thisval = this.value;
 			
-			var elements = groups.data(data.filter(function(d, i) {
-				if (i < thisval)
+			var dropelements = groups.filter(function(d, i) {
+				if (i > thisval)
 				{
 					return true;
 				}
-			}));
+			});
 			
-			elements.transition()
+			var gainelements = groups.filter(function(d, i) {
+				if (i <= thisval && i > oldvalue)
+				{
+					return true;
+				}
+			});
+			
+			console.log(dropelements);
+			console.log(gainelements);
+			
+			dropelements.selectAll("rect")
+				.transition()
 				.duration(750)
-				.attr("fill", function(d, i){
-					if (i > thisval)
-					{
-						return "red";
-					}
-					else if (i <= thisval && thisval < groups.length)
-					{
-						return "green";
-					}
-					else
-					{
-						return color(d.Rate);
-					}
-				})
+				.attr("fill", function(d, i){				
+					return "red";
+				});
+				
+			gainelements.selectAll("rect")
+				.attr("fill", function(d, i){				
+					return "green";
+				});
+			
+			dropelements.transition()
 				.delay(750)
 				.duration(750)
 				.attr("transform", function(d, i){
-					return "translate("+ 0 +", "+ height +")"; 
+					return "translate("+ 0 +", "+ (height + 100) +")"; 
+				});
+			
+			gainelements.transition()
+				.duration(750)
+				.attr("transform", function(d, i){
+					return "translate(0, " + yScale(d.State) +")"; 
+				});
+				
+			groups.selectAll("rect")
+				.transition()
+				.delay(750)
+				.duration(750)
+				.attr("fill", function(d, i){	
+					return color(d.Rate);
 				});
 			
 			
@@ -181,6 +222,7 @@
 			
 			//elements.enter().append("g")
 		});
+		
 	});
     
   </script>
