@@ -106,7 +106,9 @@
 			
 			
 			
-		d3.selectAll("input").on("click", function() {
+		d3.selectAll("input").on("click", reorder);
+		
+		function reorder() {
 			var thisclick = d3.select(this);
 			var clickval = d3.select(this).attr("value");
 			var sortval = d3.select(this).attr("class");
@@ -141,7 +143,7 @@
 				
 				return "translate("+ 0 +", "+ (i * (bar_height + 1.6)) +")"; 
 			});
-		});
+		}
 		
 	});
     
