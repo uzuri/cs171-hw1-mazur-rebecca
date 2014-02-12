@@ -1,8 +1,8 @@
-1:  There are a couple ways to make tabular summary information somewhat easier to understand.   The most basic involves sorting -- lowest at the top or bottom -- but this doesn't work so well if your table has several columns.  Another easy one is color -- highs in one extreme of bright color, lows in the other, the middle either a less saturated blend of the two or some neutral color.  
+1.  There are a couple ways to make tabular summary information somewhat easier to understand.   The most basic involves sorting -- lowest at the top or bottom -- but this doesn't work so well if your table has several columns.  Another easy one is color -- highs in one extreme of bright color, lows in the other, the middle either a less saturated blend of the two or some neutral color.  
 
 In some cases, if the summary data is *more* important than the tabular data itself, you might abandon the table all together and move to a style of chart where the summary information in more emphasized.  Any sort of chart where the size of the iconography changes (bubble charts, treemaps, etc) in relationship to the value of the data can help emphasize extremes; averages/means are harder to show this way, however, so their use would depend on what, exactly, you were trying to make the clearest.
 
-2: 
+2. 
 * I'm rather fond of NOAA's weather chart: http://forecast.weather.gov/MapClick.php?lat=42.37580&lon=-71.1187&unit=0&lg=english&FcstType=graphical  This could just be presented as a collection of time vs. forecast value table, but the charting gives a better quick look at what's coming up.  There's a lot of data on these for the weather nerd.
 * An XKCD comic -- http://xkcd.com/1298/ -- gives us a good view of the sizes of nearby planets in a way that we can quickly understand, rather than a list of numeric sizes.
 * Treemap of the 2012 election by county and state -- http://en.wikipedia.org/wiki/File:US_Presidential_Elections_2012.png -- this could (and often *is*) shown as tabular data, but this clusters it in a more interstin gmanner, relying on color and size to tell us about votes but county and state.
