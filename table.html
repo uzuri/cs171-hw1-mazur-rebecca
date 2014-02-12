@@ -98,16 +98,6 @@
 		.data(bodyrows)
 		.enter()
 		.append("tr")
-		.attr("class", function(d, i) {
-			if (i % 2 == 1)
-			{
-				return "odd";
-			}
-			else
-			{
-				return "even";
-			}
-		})
 		.on("mouseover", function(d){
 			d3.select(this).classed("high", true);
 		})
@@ -198,15 +188,14 @@
 		
 			
 		
-		// Initial sort
+		// Initial sort and zebra striping
 		tbody.selectAll("tr").sort(function(a, b) {
-			anum = Number(a[0]);
-			bnum = Number(b[0]);
 			// break any ties by diverting to state column
-			if (anum == bnum)
+			if (a[0] == b[0])
 			{
-				return d3.descending(a[1], b[1]);
+				return d3.ascending(a[1], b[1]);
 			}
+			return d3.ascending(Number(a[0]), Number(b[0]));
 		}).attr("class", null).attr("class", function(d, i) {
 			if (i % 2 == 1)
 			{
