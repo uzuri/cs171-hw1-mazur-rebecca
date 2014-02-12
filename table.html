@@ -144,14 +144,6 @@
 			// Give each td an appropriate column name -- this will make it easy to select said column distinctly from the others later
 			return "column" + i;
 			
-		})
-		.on("mouseover", function(d, i){
-			// now select all the columns with the same column class and add the highlight class
-			d3.selectAll(".column" + i).classed("high", true);
-		})
-		.on("mouseout", function(d, i){
-			// and then reverse it when you mouse out
-			d3.selectAll(".column" + i).classed("high", false);
 		});
 		
 		
@@ -186,6 +178,19 @@
 			.attr("width", function(d) { return parseFloat(d[0]); })
 			.attr("fill", "teal");
 		
+			
+			
+		
+		rows.selectAll("td")
+			.on("mouseover", function(d, i){
+				// now select all the columns with the same column class and add the highlight class
+				console.log();
+				d3.selectAll("." + this.classList[0]).classed("high", true);
+			})
+			.on("mouseout", function(d, i){
+				// and then reverse it when you mouse out
+				d3.selectAll("td").classed("high", false);
+			});
 			
 		
 		// Initial sort and zebra striping
